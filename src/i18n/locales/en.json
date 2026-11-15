@@ -1,6 +1,16 @@
 {
   "app.name": "Route Mapper SG",
   "app.tagline": "Many stops. One smart route.",
-  "app.status": "Setting up. Inbox coming next.",
-  "credits.map": "Map data © OpenStreetMap contributors"
+  "app.status": "Paste your stops below.",
+  "credits.map": "Map data © OpenStreetMap contributors",
+  "inbox.title": "Inbox",
+  "inbox.placeholder": "Paste a WhatsApp message, delivery note or list of addresses",
+  "inbox.parse": "Add to inbox",
+  "inbox.count": "{n} stops",
+  "inbox.merged": "{n} duplicates merged",
+  "inbox.ignored": "Not a stop (check these):",
+  "inbox.by": "by {time}",
+  "inbox.flag.no-postal": "Confirm address (no postal code)",
+  "inbox.flag.no-unit": "No unit number",
+  "inbox.flag.check-address": "Check address"
 }

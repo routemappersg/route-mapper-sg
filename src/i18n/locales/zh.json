@@ -1,6 +1,16 @@
 {
   "app.name": "Route Mapper SG",
   "app.tagline": "多个站点，一条最佳路线。",
-  "app.status": "正在搭建，收件箱即将推出。",
-  "credits.map": "地图数据 © OpenStreetMap 贡献者"
+  "app.status": "请在下方粘贴站点。",
+  "credits.map": "地图数据 © OpenStreetMap 贡献者",
+  "inbox.title": "收件箱",
+  "inbox.placeholder": "粘贴 WhatsApp 消息、送货单或地址列表",
+  "inbox.parse": "加入收件箱",
+  "inbox.count": "{n} 个站点",
+  "inbox.merged": "已合并 {n} 个重复项",
+  "inbox.ignored": "不是站点（请检查）：",
+  "inbox.by": "{time} 前",
+  "inbox.flag.no-postal": "请确认地址（无邮区编号）",
+  "inbox.flag.no-unit": "没有单位号",
+  "inbox.flag.check-address": "请检查地址"
 }
