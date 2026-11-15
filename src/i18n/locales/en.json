@@ -17,5 +17,13 @@
   "inbox.wipe": "Wipe all data",
   "inbox.wipe.confirm": "Delete every saved stop from this phone?",
   "inbox.unmapped": "Column not used: {col}",
-  "inbox.skipped": "Row {row} skipped (no address found)"
+  "inbox.skipped": "Row {row} skipped (no address found)",
+  "resolve.flag.not-found": "Address not found: check it",
+  "resolve.flag.postal-mismatch": "Map returned a different postal code",
+  "resolve.flag.block-mismatch": "Map returned a different block",
+  "resolve.flag.ambiguous": "Several matches: pick one",
+  "resolve.flag.confirm-address": "Confirm address (found without postal code)",
+  "resolve.flag.gate-unverified": "Gated: main gate not confirmed",
+  "resolve.flag.check-pin": "Check pin location",
+  "resolve.gated": "Gated: register at guardhouse"
 }

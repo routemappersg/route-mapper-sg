@@ -17,5 +17,13 @@
   "inbox.wipe": "Padam semua data",
   "inbox.wipe.confirm": "Padam setiap hentian yang disimpan daripada telefon ini?",
   "inbox.unmapped": "Lajur tidak digunakan: {col}",
-  "inbox.skipped": "Baris {row} dilangkau (tiada alamat)"
+  "inbox.skipped": "Baris {row} dilangkau (tiada alamat)",
+  "resolve.flag.not-found": "Alamat tidak dijumpai: sila semak",
+  "resolve.flag.postal-mismatch": "Peta memberi poskod lain",
+  "resolve.flag.block-mismatch": "Peta memberi blok lain",
+  "resolve.flag.ambiguous": "Beberapa padanan: pilih satu",
+  "resolve.flag.confirm-address": "Sahkan alamat (dijumpai tanpa poskod)",
+  "resolve.flag.gate-unverified": "Berpagar: pintu utama belum disahkan",
+  "resolve.flag.check-pin": "Semak lokasi pin",
+  "resolve.gated": "Berpagar: daftar di pondok pengawal"
 }
