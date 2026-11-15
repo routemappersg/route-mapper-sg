@@ -1,10 +1,13 @@
 import { defineConfig } from 'vitest/config';
+import { resolve } from 'node:path';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  build: { rollupOptions: { input: { main: resolve(__dirname, 'index.html'), admin: resolve(__dirname, 'admin/index.html') } } },
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: { navigateFallbackDenylist: [/^\/admin/] },
       manifest: {
         name: 'Route Mapper SG',
         short_name: 'Route Mapper',

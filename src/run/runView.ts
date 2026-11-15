@@ -9,6 +9,7 @@ import {
   applyRemainingOrder, counts, currentIndex, finish, NAV_APPS, navUrl, nextIndex, position, remaining, remainingRun,
   remainingSchedule, retry, skip, telHref, undoLast, whatsappHref, type ActiveRun, type NavApp,
 } from './model';
+import { flagNote, flushOutbox, notesFor, reportPin, sendFeedback, shareNote, type SendResult } from '../app/community';
 import { clearRun, loadNavApp, saveNavApp, saveRun } from './runStore';
 
 const esc = (s: string): string => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -142,6 +143,13 @@ export async function mountRun(root: HTMLElement, o: RunViewOptions): Promise<vo
           ${tel ? `<a class="btn ghost2" href="${esc(tel)}">${esc(t('run.call'))}</a>` : ''}
           ${wa ? `<a class="btn ghost2" href="${esc(wa)}" target="_blank" rel="noopener">${esc(t('run.whatsapp'))}</a>` : ''}
         </div>
+        ${o.providers && st.postal ? `<details class="fix"><summary>${esc(t('fix.title'))}</summary>
+          <p class="hint">${esc(t(it.place.gated ? 'fix.hint.gate' : 'fix.hint.pin'))}</p>
+          <button id="usePos" class="ghost2">${esc(t(it.place.gated ? 'fix.here.gate' : 'fix.here.pin'))}</button>
+          <div id="cnotes"></div>
+          <input id="newNote" type="text" maxlength="140" placeholder="${esc(t('fix.notePlaceholder'))}">
+          <button id="shareNote" class="ghost2">${esc(t('fix.noteShare'))}</button>
+        </details>` : ''}
         <input id="outNote" type="text" maxlength="200" placeholder="${esc(t('run.note'))}">
         <div class="outcomes">
           <button id="delivered" class="ok">${esc(t('run.delivered'))}</button>
@@ -171,6 +179,7 @@ export async function mountRun(root: HTMLElement, o: RunViewOptions): Promise<vo
         <p class="eta">${esc(t('run.summary', { delivered: c.delivered, failed: c.failed }))}</p>
         ${failed.length ? `<ul class="mini">${failed.map((k) => `<li>✗ ${esc(addrOf(k))}${a.log[a.run.items[k]!.stop.id]?.note ? ` · ${esc(a.log[a.run.items[k]!.stop.id]!.note!)}` : ''}
           <button class="ghost2" data-retry="${k}">${esc(t('run.retry'))}</button></li>`).join('')}</ul>` : ''}
+        ${o.providers ? `<p class="hint">${esc(t('rate.title'))}</p><div class="rating">${[1, 2, 3, 4, 5].map((n) => `<button class="ghost2" data-rate="${n}" aria-label="${n}">${'★'.repeat(n)}</button>`).join('')}</div>` : ''}
         <div class="outcomes">
           <button id="undo" class="ghost2">${esc(t('run.undo'))}</button>
           <button id="finishRun" class="ok">${esc(t('run.finish'))}</button>
@@ -206,6 +215,52 @@ export async function mountRun(root: HTMLElement, o: RunViewOptions): Promise<vo
     }
   };
 
+  const say = (key: string, r?: SendResult): void => {
+    message = r === 'queued' ? t('fix.queued') : t(key);
+    render();
+  };
+
+  const here = (): Promise<{ lat: number; lng: number } | null> =>
+    new Promise((resolve) => {
+      if (!navigator.geolocation) return resolve(null);
+      navigator.geolocation.getCurrentPosition(
+        (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
+        () => resolve(null),
+        { enableHighAccuracy: true, timeout: 15_000, maximumAge: 10_000 },
+      );
+    });
+
+  /** Pin fixes, drop-off notes: shared as postal code + coordinates / screened text only. */
+  const bindCommunity = (k: number): void => {
+    const it = a.run.items[k]!;
+    const postal = it.stop.postal;
+    if (!o.providers || !postal) return;
+    const main = $('#main');
+    void notesFor(postal).then((notes) => {
+      const box = main.querySelector<HTMLElement>('#cnotes');
+      if (!box || notes.length === 0) return;
+      box.innerHTML = notes.slice(0, 5).map((n) => `<p class="dropnote">${esc(n.text)} <button class="link" data-flag="${esc(n.id)}">${esc(t('fix.noteFlag'))}</button></p>`).join('');
+      box.querySelectorAll<HTMLElement>('[data-flag]').forEach((b) => b.addEventListener('click', () => void flagNote(o.store, b.dataset.flag!).then((r) => say('fix.flagged', r))));
+    });
+    main.querySelector('#usePos')?.addEventListener('click', () => {
+      void here().then(async (pos) => {
+        if (!pos) return say('fix.noGps');
+        // Fix it on this phone straight away, then tell other drivers (postal code + coordinates only).
+        a = { ...a, run: { ...a.run, items: a.run.items.map((x, i) => (i === k ? { ...x, place: { ...x.place, position: pos, confidence: 'verified' as const } } : x)) } };
+        persist();
+        say('fix.thanks', await reportPin(o.store, { postal, gated: it.place.gated, ...pos }));
+      });
+    });
+    main.querySelector('#shareNote')?.addEventListener('click', () => {
+      const input = main.querySelector<HTMLInputElement>('#newNote')!;
+      if (!input.value.trim()) return;
+      void shareNote(o.store, postal, input.value).then((r) => {
+        if (r.result === 'rejected') return say('fix.noteRejected');
+        say('fix.noteThanks', r.result);
+      });
+    });
+  };
+
   const bind = (cur: number | null): void => {
     const main = $('#main');
     if (cur !== null) {
@@ -213,6 +268,7 @@ export async function mountRun(root: HTMLElement, o: RunViewOptions): Promise<vo
       $('#delivered').addEventListener('click', () => act(finish(a, cur, 'delivered', nowMin(), note() || undefined)));
       $('#failed').addEventListener('click', () => act(finish(a, cur, 'failed', nowMin(), note() || undefined)));
       $('#skip').addEventListener('click', () => act(skip(a, cur)));
+      bindCommunity(cur);
       $('#reopt').addEventListener('click', () => void reoptimize());
       $('#navApp').addEventListener('change', (e) => {
         navApp = (e.target as HTMLSelectElement).value as NavApp;
@@ -226,6 +282,11 @@ export async function mountRun(root: HTMLElement, o: RunViewOptions): Promise<vo
     } else {
       $('#finishRun').addEventListener('click', () => void clearRun(o.store).then(() => { leave(); o.onExit(); }));
       $('#finishWipe').addEventListener('click', () => void wipeAll(o.store).then(() => { leave(); o.onExit(); }));
+      main.querySelectorAll<HTMLElement>('[data-rate]').forEach((b) => b.addEventListener('click', () => {
+        void sendFeedback(o.store, { kind: 'rating', rating: Number(b.dataset.rate), stops: a.run.items.length, flagged: Object.values(a.flags).filter((f) => f.length).length }).then(() => {
+          main.querySelector('.rating')!.innerHTML = `<p class="notice">${esc(t('rate.thanks'))}</p>`;
+        });
+      }));
       main.querySelectorAll<HTMLElement>('[data-retry]').forEach((b) => b.addEventListener('click', () => act(retry(a, Number(b.dataset.retry)))));
     }
     main.querySelector('#undo')?.addEventListener('click', () => act(undoLast(a)));
@@ -233,5 +294,6 @@ export async function mountRun(root: HTMLElement, o: RunViewOptions): Promise<vo
 
   persist();
   render();
+  if (o.providers) void flushOutbox(o.store);
 }
 

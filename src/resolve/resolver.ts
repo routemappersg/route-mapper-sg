@@ -9,6 +9,8 @@ export interface GateRecord {
   name?: string;
   postals: string[];
   gate: LatLng;
+  /** false = a corrected drop-off pin for a non-gated address (default true: a gated development's main gate). */
+  gated?: boolean;
 }
 
 export interface GateRecords {
@@ -80,7 +82,7 @@ export class Resolver {
     if (rec) {
       return {
         ...base,
-        place: { postal, position: rec.gate, gated: true, confidence: 'verified' },
+        place: { postal, position: rec.gate, gated: rec.gated !== false, confidence: 'verified' },
         development: { id: rec.developmentId, name: rec.name },
         source: 'community',
       };

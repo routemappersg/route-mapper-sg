@@ -1,6 +1,7 @@
 import type { Place, Stop } from '../domain/types';
 import { demoPlace } from '../providers/demo';
 import type { Providers } from '../providers/types';
+import { fetchCommunityGates } from './config';
 import { memoryGateRecords, Resolver, type Resolution } from '../resolve/resolver';
 
 export interface Resolved {
@@ -14,7 +15,7 @@ export interface Resolved {
  * rule; without them it uses demo positions and says so. Stops that cannot be placed are
  * returned with place = null, never dropped.
  */
-export async function resolveAll(stops: Stop[], providers: Providers | null): Promise<{ resolved: Resolved[]; demo: boolean }> {
+export async function resolveAll(stops: Stop[], providers: Providers | null, community: typeof fetchCommunityGates = fetchCommunityGates): Promise<{ resolved: Resolved[]; demo: boolean }> {
   if (!providers) {
     return {
       demo: true,
@@ -24,7 +25,9 @@ export async function resolveAll(stops: Stop[], providers: Providers | null): Pr
       }),
     };
   }
-  const resolver = new Resolver({ geocoder: providers.geocoder, mapData: providers.mapData, records: memoryGateRecords([]) });
+  // Community gates are non-personal (postal codes + coordinates); only postal codes are sent to look them up.
+  const postals = stops.map((s) => s.postal).filter((p): p is string => !!p);
+  const resolver = new Resolver({ geocoder: providers.geocoder, mapData: providers.mapData, records: memoryGateRecords(await community(postals)) });
   const out: Resolved[] = [];
   for (const stop of stops) {
     const r: Resolution = await resolver.resolve(stop);
