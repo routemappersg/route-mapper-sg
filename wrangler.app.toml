@@ -1,0 +1,9 @@
+# The front end (the PWA drivers open), served as static files by Cloudflare.
+# The API is a different Worker: see wrangler.toml. Deploy this one with:
+#   npx wrangler deploy -c wrangler.app.toml
+name = "route-mapper-app"
+compatibility_date = "2026-11-01"
+
+[assets]
+directory = "./dist"
+html_handling = "auto-trailing-slash"

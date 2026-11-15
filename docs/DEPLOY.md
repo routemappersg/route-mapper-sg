@@ -33,24 +33,26 @@ Order matters: Supabase → accounts and keys → Worker → Pages → connect t
 4. Note the Worker address, like `https://route-mapper-sg-api.<your-subdomain>.workers.dev`.
 5. Check it: open `<worker address>/health` (should say ok) and `<worker address>/config` (all four providers `true`).
 
-## 4. Deploy the app (Cloudflare Pages)
-1. **Workers & Pages → Create → Pages → Connect to Git** → the same repo, branch `main`.
-2. Build command `npm run build`, output directory `dist`.
-3. **Environment variables (not secret)**: `VITE_API_BASE` = the Worker address from step 3 (no trailing slash).
-4. Deploy. Note the Pages address (e.g. `https://route-mapper-sg.pages.dev`).
+## 4. Deploy the app (static files on Cloudflare)
+The app is a second Cloudflare application, separate from the API Worker.
+1. **Workers & Pages → Create application → Import a repository** → the same repo, branch `main`.
+2. **Project name:** `route-mapper-app` (must match `name` in `wrangler.app.toml`).
+3. **Build command:** `npm run build`. **Deploy command:** `npx wrangler deploy -c wrangler.app.toml`. **Preview command:** `npx wrangler versions upload -c wrangler.app.toml`.
+4. **Build variable (plain, do not click Encrypt):** `VITE_API_BASE` = the API Worker address from step 3, no trailing slash.
+5. Deploy. The app address is `https://route-mapper-app.<your-subdomain>.workers.dev`.
 
 ## 5. Tell the Worker which app may call it
-In the Worker's `wrangler.toml` the variable `ALLOWED_ORIGINS` lists the Pages address(es), comma-separated. If your Pages address differs from `https://route-mapper-sg.pages.dev`, change it there (commit) or in the dashboard under Variables. Without this the browser blocks the app's calls.
+In the API Worker's `wrangler.toml` the variable `ALLOWED_ORIGINS` lists the app address(es), comma-separated. If your app address differs from `https://route-mapper-app.routemappersg.workers.dev`, change it there (commit) or in the dashboard under Variables. Without this the browser blocks the app's calls.
 
 ## 6. First checks
 - Open the app, paste a few stops: pins should NOT say "demo". Postal codes get exact positions.
-- `<Pages address>/admin/` → sign in with `ADMIN_TOKEN` → you should see the overview.
+- `<app address>/admin/` → sign in with `ADMIN_TOKEN` → you should see the overview.
 - Switch a provider off in the console (`ors`, `onemap`, `overpass`, `community`) and the app degrades gracefully within a minute: it plans on the phone instead.
 
 ## Operating notes
 - **Kill-switch**: `/admin/` → Switches. Or set the Worker variable `KILL` (e.g. `ors`) for an instant, database-independent switch.
 - **Quota**: the Worker refuses routing calls past `ORS_DAILY_CAP`; phones then plan locally. Raise it only if your HEIGIT plan allows.
-- **Protect /admin properly (recommended before launch)**: Cloudflare Zero Trust → Access → add a self-hosted application for `<Pages address>/admin*` and for `<Worker address>/admin*`, allow only your email. The admin token then becomes a second lock.
+- **Protect /admin properly (recommended before launch)**: Cloudflare Zero Trust → Access → add a self-hosted application for `<app address>/admin*` and for `<Worker address>/admin*`, allow only your email. The admin token then becomes a second lock.
 - **OneMap auth header**: the Worker tries both header styles OneMap has used and remembers what works. If geocoding returns 503 after you add credentials, check `ONEMAP_EMAIL` / `ONEMAP_PASSWORD` first.
 - **Costs**: all of the above is free-tier. Cloudflare Workers free allows 100,000 requests a day; each plan uses roughly 15–60. Nothing here needs a card.
 - **Before public launch**: add the OneMap logo and Open Data Licence notice (Phase 8 Credits page).
