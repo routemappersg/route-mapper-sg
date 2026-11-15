@@ -1,4 +1,4 @@
-name = "route-mapper-sg-api"
+name = "route-mapper-sg"
 main = "worker/src/index.ts"
 compatibility_date = "2026-11-01"
 
@@ -13,3 +13,9 @@ ORS_DAILY_CAP = "400"
 
 # Secrets are NOT set here. Add them with `wrangler secret put` or in the dashboard:
 # ONEMAP_EMAIL, ONEMAP_PASSWORD, ORS_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_KEY, ADMIN_TOKEN, HASH_SALT
+
+# Preview builds (any branch other than main) run `wrangler preview`, which needs its own values.
+# Safe placeholders: a preview has no secrets, calls nothing real, and allows no routing quota.
+[previews.vars]
+ALLOWED_ORIGINS = "https://preview.invalid"
+ORS_DAILY_CAP = "0"
