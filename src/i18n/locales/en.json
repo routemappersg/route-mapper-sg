@@ -34,5 +34,21 @@
   "plan.outlier.single": "Sending stop {stop} by courier saves about {min} min",
   "plan.outlier.pair": "Sending stops {a} and {b} by courier saves about {min} min",
   "plan.outlier.rescued": "and meets {n} more deadline(s)",
-  "plan.outlier.keep": "Keep all stops"
+  "plan.outlier.keep": "Keep all stops",
+  "inbox.plan": "Plan route",
+  "review.back": "Back to inbox",
+  "review.map": "Route map",
+  "review.resolving": "Finding your stops...",
+  "review.demo": "Demo mode: stop positions are approximate and the gate rule is off until the online services are connected.",
+  "review.start": "Start",
+  "review.stopMin": "Min per stop",
+  "review.round": "Return to start",
+  "review.optimize": "Optimize",
+  "review.summary": "{n} stops · {min} min · {km} km · done by {end}",
+  "review.leg": "{min} min drive",
+  "review.late": "{min} min late",
+  "review.drag": "Drag to reorder",
+  "review.lock": "Lock this stop in place",
+  "review.unplaced": "{n} stop(s) not placed on the map (check the address):",
+  "resolve.flag.demo": "Demo position (approximate)"
 }
