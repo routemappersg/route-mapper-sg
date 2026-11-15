@@ -19,3 +19,8 @@ Model: Sonnet 5.5.
 - E2E (`tests/e2e/localWorker.ts`, real Worker code, stubbed upstreams): full flow in non-demo mode; no name, unit or phone in any browser request or Worker upstream call; PII notes blocked on device; pin report, note, rating, feedback and admin actions verified. The e2e also caught that my stub generated out-of-Singapore coordinates and the guard correctly refused them.
 - Not yet exercised against the live services (needs Ali's keys): OneMap auth header scheme, real Overpass mirrors, real ORS quota behaviour.
 - Next: Phase 7 (Opus 5.5): PDPA payload guard as a CI test over the whole app, E2E suite, security review, go-live gates.
+
+## Phase 6 going live (2026-11-15, evening)
+- API Worker `route-mapper-sg` and app Worker `route-mapper-app` deployed on Cloudflare; Supabase schema applied; `/config` all `true`; first real plan works.
+- Fixed along the way: new-style Supabase `sb_secret_` keys (PR #10); Worker name and build-vs-runtime secrets (PR #11); front end hosted as static assets with its own config (PR #12). PR #13 (speed: parallel lookups, time limits, map-data breaker, progress) is open.
+- Live-test findings and the resume plan are in `docs/HANDOFF.md`.
