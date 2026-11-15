@@ -12,5 +12,10 @@
   "inbox.by": "by {time}",
   "inbox.flag.no-postal": "Confirm address (no postal code)",
   "inbox.flag.no-unit": "No unit number",
-  "inbox.flag.check-address": "Check address"
+  "inbox.flag.check-address": "Check address",
+  "inbox.file": "Import CSV / Excel",
+  "inbox.wipe": "Wipe all data",
+  "inbox.wipe.confirm": "Delete every saved stop from this phone?",
+  "inbox.unmapped": "Column not used: {col}",
+  "inbox.skipped": "Row {row} skipped (no address found)"
 }

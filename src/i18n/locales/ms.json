@@ -12,5 +12,10 @@
   "inbox.by": "sebelum {time}",
   "inbox.flag.no-postal": "Sahkan alamat (tiada poskod)",
   "inbox.flag.no-unit": "Tiada nombor unit",
-  "inbox.flag.check-address": "Semak alamat"
+  "inbox.flag.check-address": "Semak alamat",
+  "inbox.file": "Import CSV / Excel",
+  "inbox.wipe": "Padam semua data",
+  "inbox.wipe.confirm": "Padam setiap hentian yang disimpan daripada telefon ini?",
+  "inbox.unmapped": "Lajur tidak digunakan: {col}",
+  "inbox.skipped": "Baris {row} dilangkau (tiada alamat)"
 }

@@ -13,6 +13,7 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         start_url: '/',
+        share_target: { action: '/', method: 'GET', params: { title: 'title', text: 'text', url: 'url' } },
         icons: [{ src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }],
       },
     }),

@@ -6,8 +6,11 @@ h1 { margin: 0 0 .25rem; color: #0f766e; }
 footer { margin-top: 2rem; font-size: .8rem; color: #64748b; }
 textarea { width: 100%; box-sizing: border-box; padding: .5rem; font: inherit; }
 button { margin: .5rem 0; padding: .6rem 1rem; border: 0; border-radius: .5rem; background: #0f766e; color: #fff; font: inherit; }
-ol { padding-left: 1.2rem; } li { margin-bottom: .6rem; }
+ol { padding-left: 0; list-style: none; } li { margin-bottom: .6rem; }
 .sub { color: #475569; font-size: .85rem; }
 .flag { display: inline-block; margin: .15rem .3rem 0 0; padding: .1rem .4rem; border-radius: .3rem; background: #fef3c7; color: #92400e; font-size: .75rem; }
 .flag.due { background: #dbeafe; color: #1e40af; }
 .ignored { padding: .5rem; background: #f1f5f9; border-radius: .4rem; font-size: .85rem; }
+.row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+.btn { margin: .5rem 0; padding: .6rem 1rem; border-radius: .5rem; background: #e2e8f0; cursor: pointer; }
+button.ghost { background: #fee2e2; color: #991b1b; }
