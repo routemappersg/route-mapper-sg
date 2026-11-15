@@ -17,5 +17,13 @@
   "inbox.wipe": "清除所有数据",
   "inbox.wipe.confirm": "要从此手机删除所有已保存的站点吗？",
   "inbox.unmapped": "未使用的列：{col}",
-  "inbox.skipped": "已跳过第 {row} 行（未找到地址）"
+  "inbox.skipped": "已跳过第 {row} 行（未找到地址）",
+  "resolve.flag.not-found": "找不到地址：请检查",
+  "resolve.flag.postal-mismatch": "地图返回了不同的邮区编号",
+  "resolve.flag.block-mismatch": "地图返回了不同的座号",
+  "resolve.flag.ambiguous": "有多个匹配：请选择一个",
+  "resolve.flag.confirm-address": "请确认地址（未用邮区编号找到）",
+  "resolve.flag.gate-unverified": "门禁小区：主门未确认",
+  "resolve.flag.check-pin": "请检查定位",
+  "resolve.gated": "门禁小区：请到警卫室登记"
 }

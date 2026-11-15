@@ -43,6 +43,7 @@ A free, public, mobile-first web app (PWA) for delivery drivers in **Singapore**
 | 23 | **Gated compounds** | **Route to the guarded vehicle drive-in gate; if several front/rear accesses exist, route to the MAIN entrance gate.** All postal codes in a development share that gate. Drivers register with security there |
 | 24 | Impractical routes | When deadlines/time windows pull stops to opposite ends, rank outlier stops by time saved plus deadlines rescued and suggest a third-party courier for the top 1–2. Never block planning |
 | 25 | Licence | Code AGPL-3.0; community gate data gets its own open-data licence |
+| 27 | Gate verification | A gate only counts if the **road track** confirms it: it sits on a road leading from a public road outside the development into it. Main gate = entrance opening onto the most important public road; guardhouse beats a bare barrier; pedestrian gates never count. No verified gate → flag "gate unverified", end on the nearest public road outside. Developments are detected automatically; no manual list. Driver pin fixes become community-verified records |
 | 26 | Languages | i18n-ready; launch English, Chinese, Malay; Tamil after native review |
 
 ## 3. Core user flow
