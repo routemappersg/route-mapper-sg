@@ -1,6 +1,16 @@
 {
   "app.name": "Route Mapper SG",
   "app.tagline": "Banyak hentian. Satu laluan pintar.",
-  "app.status": "Sedang disediakan. Peti masuk akan datang.",
-  "credits.map": "Data peta © penyumbang OpenStreetMap"
+  "app.status": "Tampal hentian anda di bawah.",
+  "credits.map": "Data peta © penyumbang OpenStreetMap",
+  "inbox.title": "Peti masuk",
+  "inbox.placeholder": "Tampal mesej WhatsApp, nota penghantaran atau senarai alamat",
+  "inbox.parse": "Tambah ke peti masuk",
+  "inbox.count": "{n} hentian",
+  "inbox.merged": "{n} pendua digabungkan",
+  "inbox.ignored": "Bukan hentian (sila semak):",
+  "inbox.by": "sebelum {time}",
+  "inbox.flag.no-postal": "Sahkan alamat (tiada poskod)",
+  "inbox.flag.no-unit": "Tiada nombor unit",
+  "inbox.flag.check-address": "Semak alamat"
 }
