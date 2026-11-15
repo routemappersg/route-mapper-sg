@@ -1,0 +1,6 @@
+:root { font-family: system-ui, sans-serif; color: #0f172a; background: #fff; }
+body { margin: 0; }
+.shell { max-width: 32rem; margin: 0 auto; padding: 2rem 1rem; }
+h1 { margin: 0 0 .25rem; color: #0f766e; }
+.tagline { margin: 0 0 1.5rem; color: #475569; }
+footer { margin-top: 2rem; font-size: .8rem; color: #64748b; }
