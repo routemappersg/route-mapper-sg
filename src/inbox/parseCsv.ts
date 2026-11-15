@@ -61,7 +61,17 @@ export interface CsvResult {
 }
 
 export function parseCsv(text: string, newId: () => string = counter()): CsvResult {
-  const rows = readCsv(text);
+  return parseRows(readCsv(text), newId);
+}
+
+/** Excel stores postal codes as numbers, which drops the leading zero (018956 -> 18956). Restore it. */
+function fixPostal(v: string): string {
+  return /^\d{5}$/.test(v) ? v.padStart(6, '0') : v;
+}
+
+/** Shared by CSV and XLSX: rows of cells, first row is the header. */
+export function parseRows(cells: unknown[][], newId: () => string = counter()): CsvResult {
+  const rows = cells.map((r) => r.map((c) => (c === null || c === undefined ? '' : String(c))));
   const header = rows[0] ?? [];
   const { map, unmapped } = mapColumns(header);
   const stops: Stop[] = [];
@@ -69,7 +79,7 @@ export function parseCsv(text: string, newId: () => string = counter()): CsvResu
   const cell = (r: string[], f: string): string => (map[f] === undefined ? '' : (r[map[f]!] ?? '').trim());
 
   rows.slice(1).forEach((r, idx) => {
-    const line = [cell(r, 'address'), cell(r, 'unit'), cell(r, 'postal')].filter(Boolean).join(' ');
+    const line = [cell(r, 'address'), cell(r, 'unit'), fixPostal(cell(r, 'postal'))].filter(Boolean).join(' ');
     const f = parseAddressLine(line);
     if (!f) {
       skippedRows.push(idx + 2);

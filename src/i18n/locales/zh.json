@@ -12,5 +12,10 @@
   "inbox.by": "{time} 前",
   "inbox.flag.no-postal": "请确认地址（无邮区编号）",
   "inbox.flag.no-unit": "没有单位号",
-  "inbox.flag.check-address": "请检查地址"
+  "inbox.flag.check-address": "请检查地址",
+  "inbox.file": "导入 CSV / Excel",
+  "inbox.wipe": "清除所有数据",
+  "inbox.wipe.confirm": "要从此手机删除所有已保存的站点吗？",
+  "inbox.unmapped": "未使用的列：{col}",
+  "inbox.skipped": "已跳过第 {row} 行（未找到地址）"
 }
