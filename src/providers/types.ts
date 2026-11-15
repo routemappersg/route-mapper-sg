@@ -82,15 +82,19 @@ export interface Router {
 }
 
 export interface OptimizeJob {
+  /** Points in the current order. Index `start` is the departure point. */
   points: LatLng[];
   /** Indices into `points`. */
   start: number;
+  /** null = finish at the last stop; equal to `start` = round trip; otherwise a fixed end point. */
   end: number | null;
+  /** Travel times/distances between all points, if already fetched (re-used for every re-plan). */
+  matrix?: TimeMatrix;
   /** Per-point service time, seconds. */
   serviceSec: number[];
   /** Per-point latest arrival, seconds from run start. Soft: breaches are reported, not forbidden. */
   deadlineSec: (number | null)[];
-  /** Indices that must keep their position. */
+  /** Indices that must keep their current slot (their index in `points`). */
   locked: number[];
 }
 

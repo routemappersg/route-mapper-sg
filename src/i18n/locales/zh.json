@@ -25,5 +25,14 @@
   "resolve.flag.confirm-address": "请确认地址（未用邮区编号找到）",
   "resolve.flag.gate-unverified": "门禁小区：主门未确认",
   "resolve.flag.check-pin": "请检查定位",
-  "resolve.gated": "门禁小区：请到警卫室登记"
+  "resolve.gated": "门禁小区：请到警卫室登记",
+  "plan.notice.matrix-estimated": "行驶时间为估算值（无道路数据）",
+  "plan.notice.optimizer-fallback": "已在本机规划（在线优化不可用）",
+  "plan.notice.split-suggested": "超过 50 个站点：要分成多趟吗？",
+  "plan.notice.deadlines-missed": "部分截止时间无法赶上",
+  "plan.outlier.title": "此路线过于分散",
+  "plan.outlier.single": "将站点 {stop} 交给快递可节省约 {min} 分钟",
+  "plan.outlier.pair": "将站点 {a} 和 {b} 交给快递可节省约 {min} 分钟",
+  "plan.outlier.rescued": "并多赶上 {n} 个截止时间",
+  "plan.outlier.keep": "保留所有站点"
 }

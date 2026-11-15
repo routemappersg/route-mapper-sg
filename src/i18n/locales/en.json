@@ -25,5 +25,14 @@
   "resolve.flag.confirm-address": "Confirm address (found without postal code)",
   "resolve.flag.gate-unverified": "Gated: main gate not confirmed",
   "resolve.flag.check-pin": "Check pin location",
-  "resolve.gated": "Gated: register at guardhouse"
+  "resolve.gated": "Gated: register at guardhouse",
+  "plan.notice.matrix-estimated": "Travel times are estimates (road data unavailable)",
+  "plan.notice.optimizer-fallback": "Planned on this phone (online optimizer unavailable)",
+  "plan.notice.split-suggested": "More than 50 stops: split into runs?",
+  "plan.notice.deadlines-missed": "Some deadlines can't be met",
+  "plan.outlier.title": "This route is stretched",
+  "plan.outlier.single": "Sending stop {stop} by courier saves about {min} min",
+  "plan.outlier.pair": "Sending stops {a} and {b} by courier saves about {min} min",
+  "plan.outlier.rescued": "and meets {n} more deadline(s)",
+  "plan.outlier.keep": "Keep all stops"
 }

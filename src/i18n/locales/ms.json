@@ -25,5 +25,14 @@
   "resolve.flag.confirm-address": "Sahkan alamat (dijumpai tanpa poskod)",
   "resolve.flag.gate-unverified": "Berpagar: pintu utama belum disahkan",
   "resolve.flag.check-pin": "Semak lokasi pin",
-  "resolve.gated": "Berpagar: daftar di pondok pengawal"
+  "resolve.gated": "Berpagar: daftar di pondok pengawal",
+  "plan.notice.matrix-estimated": "Masa perjalanan ialah anggaran (tiada data jalan)",
+  "plan.notice.optimizer-fallback": "Dirancang pada telefon ini (pengoptimum dalam talian tiada)",
+  "plan.notice.split-suggested": "Lebih 50 hentian: bahagikan kepada beberapa perjalanan?",
+  "plan.notice.deadlines-missed": "Sesetengah tarikh akhir tidak dapat dipenuhi",
+  "plan.outlier.title": "Laluan ini terlalu jauh",
+  "plan.outlier.single": "Hantar hentian {stop} melalui kurier menjimatkan kira-kira {min} min",
+  "plan.outlier.pair": "Hantar hentian {a} dan {b} melalui kurier menjimatkan kira-kira {min} min",
+  "plan.outlier.rescued": "dan memenuhi {n} lagi tarikh akhir",
+  "plan.outlier.keep": "Kekalkan semua hentian"
 }
