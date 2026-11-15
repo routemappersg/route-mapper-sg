@@ -17,8 +17,8 @@ Order matters: Supabase → accounts and keys → Worker → Pages → connect t
 
 ## 3. Deploy the Worker (the API)
 1. Cloudflare dashboard → **Workers & Pages → Create → Import a repository** → pick `routemappersg/route-mapper-sg`.
-2. Name it `route-mapper-sg-api`. Leave the build command empty. Deploy command: `npx wrangler deploy`. (The config is in `wrangler.toml`.)
-3. After the first deploy, open the Worker → **Settings → Variables and secrets** → add these as **Secret**:
+2. Name it `route-mapper-sg` (it must match `name` in `wrangler.toml`). Leave the build command empty. Deploy command: `npx wrangler deploy`. (The config is in `wrangler.toml`.)
+3. After the first deploy, open the Worker → **Settings** → the **Variables and secrets** section at the TOP of the page (under Runtime) → add these as **Secret**. **Do not use the Variables and secrets under "Builds"**: those are visible only while building, and the running Worker never sees them (`/config` will then show `false`):
 
 | Name | Value |
 |---|---|
