@@ -8,7 +8,7 @@ crons = ["17 3 * * *"]
 
 [vars]
 # Comma-separated origins allowed to call the API (localhost is always allowed for development).
-ALLOWED_ORIGINS = "https://route-mapper-sg.pages.dev"
+ALLOWED_ORIGINS = "https://route-mapper-app.routemappersg.workers.dev"
 ORS_DAILY_CAP = "400"
 
 # Secrets are NOT set here. Add them with `wrangler secret put` or in the dashboard:
