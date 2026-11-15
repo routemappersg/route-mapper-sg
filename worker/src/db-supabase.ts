@@ -36,7 +36,9 @@ const feedback = (r: Row): FeedbackRow => ({
 export function supabaseDb(baseUrl: string, serviceKey: string, f: F): Db {
   const root = `${baseUrl.replace(/\/+$/, '')}/rest/v1`;
   const headers = (extra: Record<string, string> = {}): Record<string, string> => ({
-    apikey: serviceKey, authorization: `Bearer ${serviceKey}`, 'content-type': 'application/json', ...extra,
+    // Legacy service_role keys are JWTs and are sent both ways. New secret keys (sb_secret_...) are not JWTs
+    // and go in the apikey header only.
+    apikey: serviceKey, ...(serviceKey.startsWith('sb_') ? {} : { authorization: `Bearer ${serviceKey}` }), 'content-type': 'application/json', ...extra,
   });
 
   async function call(path: string, init: RequestInit = {}): Promise<Response> {

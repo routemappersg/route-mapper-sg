@@ -7,7 +7,7 @@ Order matters: Supabase → accounts and keys → Worker → Pages → connect t
 ## 1. Supabase (community data)
 1. Open your project → **SQL Editor** → **New query**.
 2. Paste the whole of `supabase/schema.sql` → **Run**. It can be re-run safely.
-3. **Project Settings → API**: note the **Project URL** and the **service_role** key (the secret one, not `anon`). The app never talks to Supabase; only the Worker does, so no `anon` key is needed.
+3. **Project URL**: `https://<Project ID>.supabase.co`, where the Project ID is on **Project Settings → General**. **Key**: **Project Settings → API Keys** → **Secret key** (`sb_secret_…`; the older `service_role` key also works). Never the publishable/`anon` key. The app never talks to Supabase; only the Worker does, so no `anon` key is needed.
 4. Free projects pause after about a week of inactivity. The Worker's daily job pings the database, which keeps it awake.
 
 ## 2. Accounts and keys

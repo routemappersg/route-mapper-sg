@@ -23,6 +23,14 @@ describe('Supabase REST client: request shapes', () => {
     expect(calls[0]!.headers['authorization']).toBe('Bearer SERVICEKEY');
   });
 
+  it('sends a new-style secret key (sb_secret_...) in apikey only, never as a Bearer token', async () => {
+    const calls: Record<string, string>[] = [];
+    const f = (async (_u: string, init?: RequestInit) => { const h: Record<string, string> = {}; new Headers(init?.headers).forEach((v, k) => { h[k] = v; }); calls.push(h); return new Response('[]'); }) as unknown as typeof fetch;
+    await supabaseDb('https://proj.supabase.co', 'sb_secret_abc', f).verifiedGates(['677721']);
+    expect(calls[0]!['apikey']).toBe('sb_secret_abc');
+    expect(calls[0]!['authorization']).toBeUndefined();
+  });
+
   it('refuses ids and postal codes that are not the expected shape (no filter injection)', async () => {
     const { calls, db } = rec([]);
     await expect(db.verifiedGates(['677721),status.eq.hidden'])).rejects.toThrow();
