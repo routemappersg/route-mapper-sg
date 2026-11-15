@@ -69,3 +69,45 @@ describe('community gates', () => {
     expect(seen).toEqual([['677723']]);
   });
 });
+
+describe('resolveAll speed and resilience', () => {
+  const stopOf = (i: number) => ({ id: `s${i}`, raw: '', postal: String(677700 + i) }) as never;
+  const hit = (postal: string) => ({ postal, block: '1', street: 'X', position: { lat: 1.3, lng: 103.8 } });
+  const area = { roads: [], gates: [], developments: [] };
+
+  it('looks stops up in parallel, keeps their order and reports progress', async () => {
+    let live = 0; let peak = 0;
+    const gate = async () => { live++; peak = Math.max(peak, live); await new Promise((r) => setTimeout(r, 15)); live--; };
+    const p = {
+      geocoder: { id: 'g', byPostal: async (q: string) => { await gate(); return hit(q); }, bySearch: async () => [] },
+      mapData: { id: 'm', around: async () => area },
+    } as never;
+    const progress: number[] = [];
+    const { resolved } = await resolveAll(Array.from({ length: 10 }, (_, i) => stopOf(i)), p, async () => [], (n) => progress.push(n));
+    expect(peak).toBeGreaterThan(1);
+    expect(peak).toBeLessThanOrEqual(4);
+    expect(resolved.map((r) => r.stop.id)).toEqual(Array.from({ length: 10 }, (_, i) => `s${i}`));
+    expect(progress.at(-1)).toBe(10);
+  });
+
+  it('skips a failing map-data service after three failures but still places every stop', async () => {
+    let calls = 0;
+    const p = {
+      geocoder: { id: 'g', byPostal: async (q: string) => hit(q), bySearch: async () => [] },
+      mapData: { id: 'm', around: async () => { calls++; throw new Error('slow'); } },
+    } as never;
+    const { resolved } = await resolveAll(Array.from({ length: 12 }, (_, i) => stopOf(i)), p, async () => []);
+    expect(resolved).toHaveLength(12);
+    expect(resolved.every((r) => r.place !== null && r.flags.includes('check-pin'))).toBe(true);
+    expect(calls).toBeLessThan(12);
+  });
+
+  it('never drops a stop when the address lookup itself fails', async () => {
+    const p = {
+      geocoder: { id: 'g', byPostal: async () => { throw new Error('down'); }, bySearch: async () => [] },
+      mapData: { id: 'm', around: async () => area },
+    } as never;
+    const { resolved } = await resolveAll([stopOf(1), stopOf(2)], p, async () => []);
+    expect(resolved.map((r) => [r.place, r.flags])).toEqual([[null, ['not-found']], [null, ['not-found']]]);
+  });
+});
