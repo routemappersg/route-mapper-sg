@@ -9,6 +9,7 @@ import {
   type Run, type RunItem,
 } from './model';
 import type { LatLng } from '../domain/types';
+import type { Run as RunT } from './model';
 
 const esc = (s: string): string => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
@@ -18,6 +19,8 @@ export interface ReviewOptions {
   demo: boolean;
   providers: Providers | null;
   onBack: () => void;
+  /** Hand the plan to Run Mode: the run (visit order, locks, settings), its cached matrix and the resolver flags by stop id. */
+  onStart: (run: RunT, matrix: TimeMatrix, flags: Record<string, string[]>, estimated: boolean) => void;
 }
 
 /**
@@ -32,6 +35,7 @@ export async function mountReview(root: HTMLElement, o: ReviewOptions): Promise<
   let matrix: TimeMatrix = straightLineMatrix(buildJob(run).points);
   let notices: string[] = o.demo ? [t('review.demo')] : [];
   let outlierHtml = '';
+  let estimated = true; // straight-line until a road matrix has been fetched
 
   root.innerHTML = `
     <section class="review">
@@ -43,6 +47,7 @@ export async function mountReview(root: HTMLElement, o: ReviewOptions): Promise<
         <label>${esc(t('review.stopMin'))} <input id="stopMin" type="number" min="0" max="60" value="${run.settings.stopSec / 60}"></label>
         <label><input id="round" type="checkbox"> ${esc(t('review.round'))}</label>
         <button id="optimize">${esc(t('review.optimize'))}</button>
+        <button id="startRun" class="primary2">${esc(t('review.startRun'))}</button>
       </div>
       <p id="summary" class="summary"></p>
       <div id="outliers"></div>
@@ -139,7 +144,9 @@ export async function mountReview(root: HTMLElement, o: ReviewOptions): Promise<
       if (o.providers) {
         try {
           matrix = await o.providers.router.matrix(buildJob(run).points);
+          estimated = false;
         } catch {
+          estimated = true;
           keys.push('matrix-estimated');
         }
       }
@@ -165,6 +172,13 @@ export async function mountReview(root: HTMLElement, o: ReviewOptions): Promise<
     }
   };
   $('#optimize').addEventListener('click', () => void optimize());
+  $('#startRun').addEventListener('click', () => {
+    if (run.items.length === 0) return;
+    const flags: Record<string, string[]> = {};
+    for (const r of o.resolved) flags[r.stop.id] = r.flags;
+    map.destroy();
+    o.onStart(run, matrix, flags, estimated);
+  });
 
   render(true);
 }
