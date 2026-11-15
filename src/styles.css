@@ -48,3 +48,10 @@ a.btn.ghost2 { background: #e2e8f0; color: #0f172a; }
 button.ok { background: #15803d; color: #fff; } button.bad { background: #b91c1c; color: #fff; }
 ol.mini, ul.mini { padding-left: 1.2rem; font-size: .9rem; } details { margin: .4rem 0; }
 .resume { margin: .5rem 0; } .pin.done { background: #94a3b8; } .pin.current { background: #f59e0b; color: #000; transform: scale(1.25); }
+
+.banner { background: #fef3c7; color: #78350f; border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; margin: 8px 0; }
+
+details.fix { margin: 8px 0; }
+details.fix .hint, .hint { color: #475569; font-size: 0.85rem; margin: 6px 0; }
+.rating { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+button.link { background: none; border: 0; color: #0f766e; text-decoration: underline; padding: 0 4px; font-size: 0.8rem; cursor: pointer; }
