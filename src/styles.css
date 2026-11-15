@@ -32,3 +32,19 @@ ol.stops li[data-locked=true] { background: #f8fafc; }
 .pin { min-width: 1.7rem; height: 1.7rem; border-radius: 50%; background: #0f766e; color: #fff; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); text-align: center; line-height: 1.5rem; font-size: .75rem; font-weight: 700; }
 .pin.depot { background: #1e293b; } .pin.gated { background: #4338ca; } .pin.late { background: #dc2626; }
 button.ghost2 { background: #e2e8f0; color: #0f172a; } button.primary2 { margin-left: auto; }
+.map.small { height: 28vh; min-height: 200px; }
+.progress { margin: .25rem 0 0; font-weight: 600; } progress { width: 100%; height: .5rem; }
+.card { border: 1px solid #cbd5e1; border-radius: .6rem; padding: .75rem; margin: .5rem 0; background: #fff; }
+.cardhead { display: flex; gap: .6rem; align-items: flex-start; } .cardhead h2 { margin: 0; font-size: 1.25rem; }
+.num.big { min-width: 2.4rem; height: 2.4rem; line-height: 2.4rem; font-size: 1.1rem; }
+.unit { margin: .1rem 0; font-size: 1.1rem; font-weight: 600; } .who { margin: 0; color: #475569; }
+.dropnote { background: #f1f5f9; padding: .4rem .5rem; border-radius: .4rem; margin: .4rem 0; }
+.eta { margin: .4rem 0; color: #334155; } .next { color: #475569; margin: .25rem 0; }
+.actions { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin: .5rem 0; }
+a.btn { display: inline-block; padding: .6rem .9rem; border-radius: .5rem; background: #0f766e; color: #fff; text-decoration: none; font-weight: 600; }
+a.btn.ghost2 { background: #e2e8f0; color: #0f172a; }
+#outNote { width: 100%; box-sizing: border-box; margin: .25rem 0 .5rem; }
+.outcomes { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: .5rem; } .outcomes button { padding: .9rem .5rem; font-size: 1rem; margin: 0; }
+button.ok { background: #15803d; color: #fff; } button.bad { background: #b91c1c; color: #fff; }
+ol.mini, ul.mini { padding-left: 1.2rem; font-size: .9rem; } details { margin: .4rem 0; }
+.resume { margin: .5rem 0; } .pin.done { background: #94a3b8; } .pin.current { background: #f59e0b; color: #000; transform: scale(1.25); }

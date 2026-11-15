@@ -14,12 +14,13 @@ export const MAP_ATTRIBUTION =
 export interface MapPoint {
   position: LatLng;
   label: string;
-  kind: 'depot' | 'stop' | 'gated' | 'late';
+  kind: 'depot' | 'stop' | 'gated' | 'late' | 'done' | 'current';
   locked?: boolean;
 }
 
 export interface RouteMap {
-  update(points: MapPoint[], line: LatLng[], fit?: boolean): void;
+  /** `focus`: when fitting, frame these points instead of all of them. */
+  update(points: MapPoint[], line: LatLng[], fit?: boolean, focus?: LatLng[]): void;
   destroy(): void;
 }
 
@@ -47,7 +48,7 @@ export function createMap(container: HTMLElement): RouteMap {
   });
 
   return {
-    update(points, line, fit = false) {
+    update(points, line, fit = false, focus) {
       const apply = (): void => {
         markers.forEach((m) => m.remove());
         markers = points.map((p) => {
@@ -64,7 +65,7 @@ export function createMap(container: HTMLElement): RouteMap {
         });
         if (fit && points.length) {
           const b = new maplibregl.LngLatBounds();
-          points.forEach((p) => b.extend([p.position.lng, p.position.lat]));
+          (focus && focus.length ? focus : points.map((p) => p.position)).forEach((p) => b.extend([p.lng, p.lat]));
           map.fitBounds(b, { padding: 40, maxZoom: 16, duration: 0 });
         }
       };
