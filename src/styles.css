@@ -14,3 +14,21 @@ ol { padding-left: 0; list-style: none; } li { margin-bottom: .6rem; }
 .row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
 .btn { margin: .5rem 0; padding: .6rem 1rem; border-radius: .5rem; background: #e2e8f0; cursor: pointer; }
 button.ghost { background: #fee2e2; color: #991b1b; }
+.shell.wide { max-width: 56rem; }
+.map { height: 45vh; min-height: 260px; border-radius: .5rem; overflow: hidden; margin: .5rem 0; }
+.controls { display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; margin: .5rem 0; }
+.controls input[type=number] { width: 4rem; } .controls label { font-size: .85rem; color: #334155; }
+.summary { font-weight: 600; margin: .25rem 0 .5rem; }
+.notice { padding: .5rem; background: #fef3c7; color: #92400e; border-radius: .4rem; font-size: .85rem; }
+.outlier { padding: .6rem; margin: .5rem 0; background: #ffedd5; color: #9a3412; border-radius: .4rem; font-size: .9rem; }
+ol.stops { padding: 0; list-style: none; }
+ol.stops li { display: flex; gap: .5rem; align-items: flex-start; padding: .5rem; border-bottom: 1px solid #e2e8f0; touch-action: none; }
+ol.stops li.dragging { background: #f0fdfa; }
+ol.stops li[data-locked=true] { background: #f8fafc; }
+.grip { cursor: grab; user-select: none; padding: .25rem .4rem; color: #64748b; touch-action: none; }
+.num { min-width: 1.6rem; height: 1.6rem; border-radius: 50%; background: #0f766e; color: #fff; text-align: center; line-height: 1.6rem; font-size: .8rem; }
+.body { flex: 1; } button.lock { margin: 0; padding: .2rem .4rem; background: transparent; font-size: 1rem; }
+.flag.gate { background: #e0e7ff; color: #3730a3; } .flag.late { background: #fee2e2; color: #991b1b; }
+.pin { min-width: 1.7rem; height: 1.7rem; border-radius: 50%; background: #0f766e; color: #fff; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4); text-align: center; line-height: 1.5rem; font-size: .75rem; font-weight: 700; }
+.pin.depot { background: #1e293b; } .pin.gated { background: #4338ca; } .pin.late { background: #dc2626; }
+button.ghost2 { background: #e2e8f0; color: #0f172a; } button.primary2 { margin-left: auto; }

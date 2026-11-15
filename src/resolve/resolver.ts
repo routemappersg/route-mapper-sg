@@ -23,7 +23,7 @@ export function memoryGateRecords(list: GateRecord[]): GateRecords {
 
 export type ResolveFlag =
   | 'not-found' | 'postal-mismatch' | 'block-mismatch' | 'ambiguous'
-  | 'confirm-address' | 'gate-unverified' | 'check-pin';
+  | 'confirm-address' | 'gate-unverified' | 'check-pin' | 'demo';
 
 export interface Resolution {
   stopId: string;

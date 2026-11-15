@@ -34,5 +34,21 @@
   "plan.outlier.single": "将站点 {stop} 交给快递可节省约 {min} 分钟",
   "plan.outlier.pair": "将站点 {a} 和 {b} 交给快递可节省约 {min} 分钟",
   "plan.outlier.rescued": "并多赶上 {n} 个截止时间",
-  "plan.outlier.keep": "保留所有站点"
+  "plan.outlier.keep": "保留所有站点",
+  "inbox.plan": "规划路线",
+  "review.back": "返回收件箱",
+  "review.map": "路线地图",
+  "review.resolving": "正在查找您的站点…",
+  "review.demo": "演示模式：站点位置为大致位置，连接在线服务前门禁规则不生效。",
+  "review.start": "出发",
+  "review.stopMin": "每站分钟",
+  "review.round": "返回起点",
+  "review.optimize": "优化",
+  "review.summary": "{n} 个站点 · {min} 分钟 · {km} 公里 · {end} 完成",
+  "review.leg": "车程 {min} 分钟",
+  "review.late": "迟到 {min} 分钟",
+  "review.drag": "拖动排序",
+  "review.lock": "锁定此站位置",
+  "review.unplaced": "{n} 个站点未能显示在地图上（请检查地址）：",
+  "resolve.flag.demo": "演示位置（大致）"
 }

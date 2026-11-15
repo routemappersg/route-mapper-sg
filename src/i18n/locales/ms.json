@@ -34,5 +34,21 @@
   "plan.outlier.single": "Hantar hentian {stop} melalui kurier menjimatkan kira-kira {min} min",
   "plan.outlier.pair": "Hantar hentian {a} dan {b} melalui kurier menjimatkan kira-kira {min} min",
   "plan.outlier.rescued": "dan memenuhi {n} lagi tarikh akhir",
-  "plan.outlier.keep": "Kekalkan semua hentian"
+  "plan.outlier.keep": "Kekalkan semua hentian",
+  "inbox.plan": "Rancang laluan",
+  "review.back": "Kembali ke peti masuk",
+  "review.map": "Peta laluan",
+  "review.resolving": "Mencari hentian anda...",
+  "review.demo": "Mod demo: lokasi hentian adalah anggaran dan peraturan pintu pagar tidak aktif sehingga perkhidmatan dalam talian disambungkan.",
+  "review.start": "Mula",
+  "review.stopMin": "Min setiap hentian",
+  "review.round": "Kembali ke permulaan",
+  "review.optimize": "Optimumkan",
+  "review.summary": "{n} hentian · {min} min · {km} km · siap {end}",
+  "review.leg": "{min} min perjalanan",
+  "review.late": "Lewat {min} min",
+  "review.drag": "Seret untuk susun semula",
+  "review.lock": "Kunci hentian ini",
+  "review.unplaced": "{n} hentian tidak diletakkan pada peta (semak alamat):",
+  "resolve.flag.demo": "Lokasi demo (anggaran)"
 }

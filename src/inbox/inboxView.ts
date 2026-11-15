@@ -30,7 +30,7 @@ const newId = (): string => `s${Date.now().toString(36)}${(seq++).toString(36)}`
  * Paste box + file import + saved list. Everything stays on the device (IndexedDB);
  * nothing here makes a network request.
  */
-export async function mountInbox(root: HTMLElement, store: KeyValueStore, prefill = ''): Promise<void> {
+export async function mountInbox(root: HTMLElement, store: KeyValueStore, prefill = '', onPlan: (stops: Stop[]) => void = () => undefined): Promise<void> {
   let stops: Stop[] = await loadInbox(store);
   let notes: string[] = [];
   let message = '';
@@ -43,6 +43,7 @@ export async function mountInbox(root: HTMLElement, store: KeyValueStore, prefil
         <button id="parse">${esc(t('inbox.parse'))}</button>
         <label class="btn">${esc(t('inbox.file'))}<input id="file" type="file" accept=".csv,.xlsx" hidden></label>
         <button id="wipe" class="ghost">${esc(t('inbox.wipe'))}</button>
+        <button id="plan" class="primary2">${esc(t('inbox.plan'))}</button>
       </div>
       <div id="result"></div>
     </section>`;
@@ -88,6 +89,8 @@ export async function mountInbox(root: HTMLElement, store: KeyValueStore, prefil
     input.value = '';
     await add(r.stops, extra);
   });
+
+  root.querySelector('#plan')?.addEventListener('click', () => { if (stops.length) onPlan(stops); });
 
   root.querySelector('#wipe')?.addEventListener('click', async () => {
     if (!window.confirm(t('inbox.wipe.confirm'))) return;
