@@ -88,7 +88,10 @@ async function showReview(stops: Stop[]): Promise<void> {
   if (!root) return;
   root.innerHTML = `<main class="shell wide"><p>${t('review.resolving')}</p></main>`;
   await ready;
-  const { resolved, demo } = await resolveAll(stops, providers);
+  const { resolved, demo } = await resolveAll(stops, providers, undefined, (n, total) => {
+    const line = root.querySelector('p');
+    if (line) line.textContent = `${t('review.resolving')} ${n}/${total}`;
+  });
   root.innerHTML = `<main class="shell wide"><div id="review"></div></main>`;
   const el = document.getElementById('review');
   if (el) {
