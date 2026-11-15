@@ -4,7 +4,7 @@
 
 A free, community-driven web app (PWA) for Singapore delivery drivers. It collects stops from WhatsApp, delivery notes and spreadsheets, plans and optimizes up to 50 stops, then guides the run one stop at a time. Built to fill the gaps in Google Maps multi-stop routing. Made by SAMO.
 
-> Status: Phase 5 done (Run Mode: one stop at a time, navigation hand-off, Delivered/Failed/Skip, undo, re-optimize remaining, resume after closing). Runs in demo mode with approximate positions until the Cloudflare Worker (Phase 6) connects OneMap. Next: Cloudflare, Supabase, community gates.
+> Status: Phases 0–6 done (skeleton, inbox, address resolution, optimizer, map and review, run mode, backend and community). Next: Phase 7 (PDPA guard, E2E, security review).
 
 ## Why
 Google Maps limits routes to 10 stops, loses your plan when closed, drops pins on the road beside condos, and can't hold unit numbers, deadlines or contacts. Route Mapper keeps the parts Google does well (durations, leg times, easy reordering) and fixes the rest.
