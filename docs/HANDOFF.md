@@ -57,3 +57,12 @@ Branch per change, small commits ending with the `Co-Authored-By: Claude Sonnet 
 
 ## Paste this to resume
 > Resume Route Mapper SG. Read `docs/HANDOFF.md` and the end of `docs/SESSION_LOG.md` on `main` first. PR #13 should be merged; check, then continue with "Plan" step 2.
+
+---
+
+## Update 2026-11-22: after field feedback
+
+- **PR #14** (stacked on #13) answers the four feedback points: live pinning as stops are added, chat-style input with feedback, start from phone location or postal code, deliver-by badges, mobile layout. Merge **#13 first**, then #14 (GitHub retargets it to `main`). Wait for both Cloudflare builds to go green (Retry build if one times out initializing), then test on the S22 and vivo V60 Lite.
+- **Resuming on AliZen or Sumang:** nothing needs the desktop app. The source of truth is GitHub plus the Project docs. On either machine: `git fetch --all && git checkout main && git pull`, read `docs/HANDOFF.md` and the end of `docs/SESSION_LOG.md`. Secrets stay in Cloudflare (runtime) and `.env.local` (git-ignored, per machine).
+- **Before closing any session or device:** commit, push the branch, and make sure the session-log entry is in the PR. Anything left only in a cloud or local working copy does not sync.
+- **Still open:** road-following route line, live GPS for re-optimize, native review of new zh/ms strings, real-phone test, Phase 7 (Opus 5.5), Phase 8 (Haiku 5.5).
