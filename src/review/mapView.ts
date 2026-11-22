@@ -16,11 +16,15 @@ export interface MapPoint {
   label: string;
   kind: 'depot' | 'stop' | 'gated' | 'late' | 'done' | 'current';
   locked?: boolean;
+  /** Deliver-by badge shown on the pin: the time, and how it sits against the planned arrival. */
+  due?: { time: string; state: 'plain' | 'ok' | 'tight' | 'late' };
 }
 
 export interface RouteMap {
   /** `focus`: when fitting, frame these points instead of all of them. */
   update(points: MapPoint[], line: LatLng[], fit?: boolean, focus?: LatLng[]): void;
+  /** Call after the container was hidden or resized. */
+  resize(): void;
   destroy(): void;
 }
 
@@ -54,8 +58,17 @@ export function createMap(container: HTMLElement): RouteMap {
         markers = points.map((p) => {
           const el = document.createElement('div');
           el.className = `pin ${p.kind}`;
-          el.textContent = p.label;
-          el.setAttribute('aria-label', `Stop ${p.label}`);
+          const num = document.createElement('span');
+          num.className = 'pinnum';
+          num.textContent = p.label;
+          el.append(num);
+          if (p.due) {
+            const b = document.createElement('span');
+            b.className = `pindue ${p.due.state}`;
+            b.textContent = `⏰ ${p.due.time}`;
+            el.append(b);
+          }
+          el.setAttribute('aria-label', p.due ? `Stop ${p.label}, deliver by ${p.due.time}` : `Stop ${p.label}`);
           if (p.locked) el.dataset.locked = 'true';
           return new maplibregl.Marker({ element: el }).setLngLat([p.position.lng, p.position.lat]).addTo(map);
         });
@@ -66,12 +79,15 @@ export function createMap(container: HTMLElement): RouteMap {
         if (fit && points.length) {
           const b = new maplibregl.LngLatBounds();
           (focus && focus.length ? focus : points.map((p) => p.position)).forEach((p) => b.extend([p.lng, p.lat]));
-          map.fitBounds(b, { padding: 40, maxZoom: 16, duration: 0 });
+          map.fitBounds(b, { padding: { top: 40, left: 40, right: 40, bottom: 75 }, maxZoom: 16, duration: 0 });
         }
       };
       // Pins do not need the style or tiles; the route line is applied again once the style is ready.
       apply();
       if (!ready) pending = apply;
+    },
+    resize() {
+      map.resize();
     },
     destroy() {
       markers.forEach((m) => m.remove());

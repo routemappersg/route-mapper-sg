@@ -24,3 +24,13 @@ Model: Sonnet 5.5.
 - API Worker `route-mapper-sg` and app Worker `route-mapper-app` deployed on Cloudflare; Supabase schema applied; `/config` all `true`; first real plan works.
 - Fixed along the way: new-style Supabase `sb_secret_` keys (PR #10); Worker name and build-vs-runtime secrets (PR #11); front end hosted as static assets with its own config (PR #12). PR #13 (speed: parallel lookups, time limits, map-data breaker, progress) is open.
 - Live-test findings and the resume plan are in `docs/HANDOFF.md`.
+
+## Phase 6.5: field feedback pass (2026-11-22)
+Model: Sonnet 5.5. Branch `phase-6.5/mobile-feedback`, stacked on PR #13.
+- **Live lookups:** each stop is looked up and pinned the moment it is sent (`resolveAll` gained an `onEach` callback); the map fills in live; Plan route only optimizes, waiting for any lookup still running. Found positions (postal + coordinates, non-personal) are cached on the device so reopening does not repeat them.
+- **Chat input:** home screen is now a chat (`src/planner/`). Paste or type stops like messages; each reply lists the stops with live status (finding, pinned, gated, check the pin, not found + Try again, remove). Feedback goes through the same box (💬 switch). CSV/Excel import is the 📎 button. Never silently drops a stop.
+- **Start point:** real start from the phone's location or a postal code (`src/app/start.ts`), kept on the device; coordinates are rounded to about 110 m before any routing call. No start set → route begins at the first stop with a notice (never blocks). Replaces the hard-coded demo start. Departure time defaults to now (rounded to 5 min).
+- **Deliver-by:** pins carry a ⏰ time badge (blue before planning; green / amber under 15 min / red once planned); list and Run Mode show "Deliver by 13:00 · 20 min to spare / 12 min late".
+- **Mobile UX:** dynamic viewport height and safe-area insets, 44px+ touch targets, 16px inputs, docked composer and bottom action bar (thumb reach), loading states (optimizing spinner and hint), Run Mode "Back to stops" (run stays saved), bigger Delivered button, reduced-motion respected.
+- Tests: 181 pass (start point, deliver-by, chat helpers, per-stop lookup timing, cache). Headless 390px run through the real screens against the local Worker: no name, unit or phone in any request.
+- Not done: drawn route follows roads (line is still straight between stops); live GPS for re-optimize; chat history is not kept between visits (the stop list is); zh/ms strings for the new keys need native review (Phase 8); real-phone test.
