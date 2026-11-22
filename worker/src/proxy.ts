@@ -38,6 +38,7 @@ export function createProxy(p: Platform) {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'user-agent': UA },
       body: JSON.stringify({ email: env.ONEMAP_EMAIL, password: env.ONEMAP_PASSWORD }),
+      signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) return null;
     const body = (await res.json()) as { access_token?: string; expiry_timestamp?: string | number };
@@ -56,7 +57,7 @@ export function createProxy(p: Platform) {
 
     const url = `${ONEMAP}/api/common/elastic/search?searchVal=${encodeURIComponent(q)}&returnGeom=Y&getAddrDetails=Y&pageNum=1`;
     const call = async (t: string, s: 'raw' | 'bearer'): Promise<Response> =>
-      p.fetch(url, { headers: { authorization: s === 'bearer' ? `Bearer ${t}` : t, 'user-agent': UA } });
+      p.fetch(url, { headers: { authorization: s === 'bearer' ? `Bearer ${t}` : t, 'user-agent': UA }, signal: AbortSignal.timeout(10_000) });
 
     let t = await oneMapToken(env, false);
     if (!t) return json({ error: 'onemap-not-configured' }, 503);
@@ -96,6 +97,7 @@ export function createProxy(p: Platform) {
           method: 'POST',
           headers: { 'content-type': 'application/x-www-form-urlencoded', 'user-agent': UA },
           body: `data=${encodeURIComponent(query)}`,
+          signal: AbortSignal.timeout(12_000), // a slow free mirror must not hold the whole plan up
         });
         if (!res.ok) continue;
         const text = await res.text();
@@ -115,6 +117,7 @@ export function createProxy(p: Platform) {
         method: 'POST',
         headers: { authorization: env.ORS_API_KEY, 'content-type': 'application/json', accept: 'application/json, application/geo+json', 'user-agent': UA },
         body: JSON.stringify(body),
+        signal: AbortSignal.timeout(30_000),
       });
     } catch {
       return json({ error: 'ors-unreachable' }, 502);
