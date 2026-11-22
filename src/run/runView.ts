@@ -25,6 +25,8 @@ export interface RunViewOptions {
   providers: Providers | null;
   demo: boolean;
   onExit: () => void;
+  /** Leave Run Mode without ending the run: it stays saved and can be resumed. */
+  onBack: () => void;
 }
 
 /**
@@ -40,11 +42,15 @@ export async function mountRun(root: HTMLElement, o: RunViewOptions): Promise<vo
 
   root.innerHTML = `
     <section class="run">
-      <div id="rnotices"></div>
-      <p id="progress" class="progress"></p>
-      <progress id="bar" max="1" value="0"></progress>
-      <div id="map" class="map small" role="region" aria-label="${esc(t('review.map'))}"></div>
-      <div id="main"></div>
+      <header class="topbar">
+        <button id="back" class="iconbtn" aria-label="${esc(t('run.back'))}">←</button>
+        <div class="brand"><b id="progress" class="progress"></b><progress id="bar" max="1" value="0"></progress></div>
+      </header>
+      <div class="scroll">
+        <div id="rnotices"></div>
+        <div id="map" class="map small" role="region" aria-label="${esc(t('review.map'))}"></div>
+        <div id="main"></div>
+      </div>
     </section>`;
   const { createMap } = await import('../review/mapView');
   const map: RouteMap = createMap(root.querySelector<HTMLElement>('#map')!);
@@ -67,6 +73,7 @@ export async function mountRun(root: HTMLElement, o: RunViewOptions): Promise<vo
   };
 
   const persist = (): void => { void saveRun(o.store, a); };
+  $('#back').addEventListener('click', () => { persist(); leave(); o.onBack(); });
   const addrOf = (k: number): string => {
     const st = a.run.items[k]!.stop;
     return [st.block, st.street].filter(Boolean).join(' ') || st.postal || '';
@@ -115,12 +122,13 @@ export async function mountRun(root: HTMLElement, o: RunViewOptions): Promise<vo
     const plan = a.planned[st.id];
     const drift = arrive !== undefined && plan !== undefined ? Math.round(arrive - plan) : 0;
     const dl = deadlineText(st);
-    const late = arrive !== undefined && st.deadlineMin !== undefined && arrive > st.deadlineMin;
+    const slack = arrive !== undefined && st.deadlineMin !== undefined ? Math.round(st.deadlineMin - arrive) : undefined;
+    const late = slack !== undefined && slack < 0;
     const driftText = Math.abs(drift) < 5 ? t('run.drift.on') : drift > 0 ? t('run.drift.late', { min: drift }) : t('run.drift.early', { min: -drift });
     const flags = [
       it.place.gated ? `<span class="flag gate">${esc(t('resolve.gated'))}</span>` : '',
       st.status === 'skipped' ? `<span class="flag">${esc(t('run.revisit'))}</span>` : '',
-      dl ? `<span class="flag ${late ? 'late' : 'due'}">${esc(t('inbox.by', { time: dl }))}</span>` : '',
+      dl ? `<span class="duechip ${late ? 'late' : slack !== undefined && slack < 15 ? 'tight' : 'ok'}">⏰ ${esc(t('due.by', { time: dl }))}${slack === undefined ? '' : ` · ${esc(late ? t('due.late', { min: -slack }) : t('due.spare', { min: slack }))}`}</span>` : '',
       ...(a.flags[st.id] ?? []).map((f) => `<span class="flag">${esc(t(`resolve.flag.${f}`))}</span>`),
     ].join('');
     const tel = telHref(st.contact);

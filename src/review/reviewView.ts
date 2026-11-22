@@ -5,8 +5,8 @@ import type { Providers, TimeMatrix } from '../providers/types';
 import type { Resolved } from '../app/resolveAll';
 import type { MapPoint, RouteMap } from './mapView';
 import {
-  buildJob, clock, DEFAULT_SETTINGS, deadlineText, moveStop, optimizeInputs, orderFromResult, schedule, toggleLock,
-  type Run, type RunItem,
+  buildJob, clock, DEFAULT_SETTINGS, departureNow, dueInfo, moveStop, optimizeInputs, orderFromResult, schedule, toggleLock,
+  type DueInfo, type Run, type RunItem,
 } from './model';
 import type { LatLng } from '../domain/types';
 import type { Run as RunT } from './model';
@@ -16,6 +16,8 @@ const esc = (s: string): string => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeA
 export interface ReviewOptions {
   resolved: Resolved[];
   depot: LatLng;
+  /** False when no start was set and the route begins at the first stop. */
+  startKnown?: boolean;
   demo: boolean;
   providers: Providers | null;
   onBack: () => void;
@@ -31,28 +33,41 @@ export async function mountReview(root: HTMLElement, o: ReviewOptions): Promise<
   const placed = o.resolved.filter((r): r is Resolved & { place: NonNullable<Resolved['place']> } => r.place !== null);
   const unplaced = o.resolved.filter((r) => r.place === null);
   const items: RunItem[] = placed.map((r) => ({ stop: r.stop, place: r.place, locked: false }));
-  let run: Run = { depot: o.depot, items, settings: { ...DEFAULT_SETTINGS }, order: items.map((_, i) => i) };
+  let run: Run = { depot: o.depot, items, settings: { ...DEFAULT_SETTINGS, startMin: departureNow() }, order: items.map((_, i) => i) };
   let matrix: TimeMatrix = straightLineMatrix(buildJob(run).points);
-  let notices: string[] = o.demo ? [t('review.demo')] : [];
+  const baseNotices = (): string[] => [...(o.demo ? [t('review.demo')] : []), ...(o.startKnown === false ? [t('start.fallback')] : [])];
+  let notices: string[] = baseNotices();
   let outlierHtml = '';
   let estimated = true; // straight-line until a road matrix has been fetched
 
   root.innerHTML = `
     <section class="review">
-      <div class="row"><button id="back" class="ghost2">${esc(t('review.back'))}</button></div>
-      <div id="notices"></div>
-      <div id="map" class="map" role="region" aria-label="${esc(t('review.map'))}"></div>
-      <div class="controls">
-        <label>${esc(t('review.start'))} <input id="startTime" type="time" value="${clock(run.settings.startMin)}"></label>
-        <label>${esc(t('review.stopMin'))} <input id="stopMin" type="number" min="0" max="60" value="${run.settings.stopSec / 60}"></label>
-        <label><input id="round" type="checkbox"> ${esc(t('review.round'))}</label>
-        <button id="optimize">${esc(t('review.optimize'))}</button>
-        <button id="startRun" class="primary2">${esc(t('review.startRun'))}</button>
+      <header class="topbar">
+        <button id="back" class="iconbtn" aria-label="${esc(t('review.back'))}">←</button>
+        <div class="brand"><b>${esc(t('review.title'))}</b><span id="summary" class="summary"></span></div>
+      </header>
+      <div class="scroll">
+        <div id="notices"></div>
+        <div id="map" class="map small" role="region" aria-label="${esc(t('review.map'))}"></div>
+        <p id="legend" class="hint legend"></p>
+        <details class="settings"><summary>${esc(t('review.settings'))}</summary>
+          <div class="controls">
+            <label>${esc(t('review.start'))} <input id="startTime" type="time" value="${clock(run.settings.startMin)}"></label>
+            <label>${esc(t('review.stopMin'))} <input id="stopMin" type="number" inputmode="numeric" min="0" max="60" value="${run.settings.stopSec / 60}"></label>
+            <label class="check"><input id="round" type="checkbox"> ${esc(t('review.round'))}</label>
+          </div>
+        </details>
+        <div id="outliers"></div>
+        <ol id="list" class="stops"></ol>
+        <div id="unplaced"></div>
       </div>
-      <p id="summary" class="summary"></p>
-      <div id="outliers"></div>
-      <ol id="list" class="stops"></ol>
-      <div id="unplaced"></div>
+      <div class="dock">
+        <p id="status" class="hint center" role="status"></p>
+        <div class="split">
+          <button id="optimize" class="ghost2 big">${esc(t('review.optimize'))}</button>
+          <button id="startRun" class="primary big">${esc(t('review.startRun'))}</button>
+        </div>
+      </div>
     </section>`;
 
   // The map library is large: load it only when this screen opens.
@@ -62,21 +77,29 @@ export async function mountReview(root: HTMLElement, o: ReviewOptions): Promise<
 
   const render = (fit = false): void => {
     const s = schedule(run, matrix);
-    const pts: MapPoint[] = [{ position: run.depot, label: 'S', kind: 'depot' }, ...s.rows.map((r): MapPoint => ({
-      position: r.item.place.position, label: String(r.n), kind: r.lateMin > 0 ? 'late' : r.item.place.gated ? 'gated' : 'stop', locked: r.item.locked,
-    }))];
+    const due = (r: { item: RunItem; arriveMin: number }): DueInfo | null => dueInfo(r.item.stop, r.arriveMin);
+    const pts: MapPoint[] = [{ position: run.depot, label: 'S', kind: 'depot' }, ...s.rows.map((r): MapPoint => {
+      const d = due(r);
+      return {
+        position: r.item.place.position, label: String(r.n), kind: d?.state === 'late' ? 'late' : r.item.place.gated ? 'gated' : 'stop', locked: r.item.locked,
+        ...(d ? { due: { time: d.time, state: d.state } } : {}),
+      };
+    })];
     map.update(pts, pts.map((p) => p.position), fit);
     $('#summary').textContent = t('review.summary', { n: s.rows.length, min: Math.round(s.totalMin), km: s.totalKm.toFixed(1), end: clock(s.finishMin) });
     $('#notices').innerHTML = notices.map((n) => `<p class="notice">${esc(n)}</p>`).join('');
     $('#outliers').innerHTML = outlierHtml;
+    $('#legend').textContent = run.items.some((i) => i.stop.deadlineMin !== undefined) ? t('due.legend') : '';
     $('#list').innerHTML = s.rows.map((r) => {
       const st = r.item.stop;
       const addr = [st.block, st.street].filter(Boolean).join(' ');
-      const dl = deadlineText(st);
+      const d = due(r);
+      const dueText = d
+        ? d.state === 'late' ? t('due.late', { min: -d.slackMin }) : d.state === 'tight' ? t('due.tight', { min: d.slackMin }) : t('due.spare', { min: d.slackMin })
+        : '';
       const flags = [
         r.item.place.gated ? `<span class="flag gate">${esc(t('resolve.gated'))}</span>` : '',
-        dl ? `<span class="flag due">${esc(t('inbox.by', { time: dl }))}</span>` : '',
-        r.lateMin > 0 ? `<span class="flag late">${esc(t('review.late', { min: Math.round(r.lateMin) }))}</span>` : '',
+        d ? `<span class="duechip ${d.state}">⏰ ${esc(t('due.by', { time: d.time }))} · ${esc(dueText)}</span>` : '',
         ...(o.resolved.find((x) => x.stop.id === st.id)?.flags ?? []).map((f) => `<span class="flag">${esc(t(`resolve.flag.${f}`))}</span>`),
       ].join('');
       return `<li data-pos="${r.n - 1}" data-locked="${r.item.locked}">
@@ -137,7 +160,13 @@ export async function mountReview(root: HTMLElement, o: ReviewOptions): Promise<
 
   const optimize = async (): Promise<void> => {
     const btn = $<HTMLButtonElement>('#optimize');
+    const go = $<HTMLButtonElement>('#startRun');
+    const label = btn.textContent;
     btn.disabled = true;
+    go.disabled = true;
+    btn.setAttribute('aria-busy', 'true');
+    btn.innerHTML = `<span class="spin" aria-hidden="true"></span>${esc(t('review.optimizing'))}`;
+    $('#status').textContent = t('review.optimizing.hint');
     const keys: string[] = [];
     try {
       // One road-matrix call per plan (kept for every later drag). Fall back to estimates.
@@ -155,7 +184,7 @@ export async function mountReview(root: HTMLElement, o: ReviewOptions): Promise<
       const plan = await planRoute({ ...inp.job, matrix: inp.matrix }, { hosted: o.providers?.optimizer });
       run = { ...run, order: orderFromResult(inp, plan.order) };
       keys.push(...plan.notices);
-      notices = [...(o.demo ? [t('review.demo')] : []), ...[...new Set(keys)].map((n) => t(`plan.notice.${n}`))];
+      notices = [...baseNotices(), ...[...new Set(keys)].map((n) => t(`plan.notice.${n}`))];
       const out = plan.outliers;
       const pos = (p: number): number => positionOf(run, inp.itemOf[p]!);
       const lines = [...(out.pair ? [out.pair] : []), ...out.singles].slice(0, 2).map((x) => {
@@ -168,6 +197,10 @@ export async function mountReview(root: HTMLElement, o: ReviewOptions): Promise<
       outlierHtml = out.impractical ? `<div class="outlier"><b>${esc(t('plan.outlier.title'))}</b><br>${lines.join('<br>')}</div>` : '';
     } finally {
       btn.disabled = false;
+      go.disabled = false;
+      btn.removeAttribute('aria-busy');
+      btn.textContent = label;
+      $('#status').textContent = '';
       render();
     }
   };

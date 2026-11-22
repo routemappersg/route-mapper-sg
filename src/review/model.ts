@@ -169,3 +169,25 @@ export function clock(min: number): string {
 
 /** Latest-arrival time shown as "by 13:00" if present. */
 export const deadlineText = (s: Stop): string | null => (s.deadlineMin === undefined ? null : clock(s.deadlineMin));
+
+export type DueState = 'ok' | 'tight' | 'late';
+export interface DueInfo {
+  /** The deliver-by time, "13:00". */
+  time: string;
+  /** Minutes to spare at the planned arrival (negative = late). */
+  slackMin: number;
+  state: DueState;
+}
+
+/** How a stop's deliver-by time sits against its planned arrival. Null when the stop has no deadline. */
+export function dueInfo(stop: Stop, arriveMin: number, tightMin = 15): DueInfo | null {
+  if (stop.deadlineMin === undefined) return null;
+  const slackMin = Math.round(stop.deadlineMin - arriveMin);
+  return { time: clock(stop.deadlineMin), slackMin, state: slackMin < 0 ? 'late' : slackMin < tightMin ? 'tight' : 'ok' };
+}
+
+/** Default departure time: now, rounded up to the next 5 minutes (a plan for 09:00 is useless at 14:20). */
+export function departureNow(now: Date = new Date()): number {
+  const m = now.getHours() * 60 + now.getMinutes();
+  return Math.min(23 * 60 + 55, Math.ceil(m / 5) * 5);
+}

@@ -26,7 +26,6 @@ const BY_BLOCK: Record<string, { lat: number; lng: number }> = {
   '570': P(1.378, 103.8882),
 };
 
-export const DEMO_START = P(1.3521, 103.8198);
 
 export function demoPlace(stop: Stop): Place | null {
   const pos = (stop.postal && BY_POSTAL[stop.postal]) || (stop.block && BY_BLOCK[stop.block]) || null;

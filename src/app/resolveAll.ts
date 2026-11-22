@@ -28,13 +28,17 @@ export async function resolveAll(
   providers: Providers | null,
   community: typeof fetchCommunityGates = fetchCommunityGates,
   onProgress: (done: number, total: number) => void = () => undefined,
+  /** Called as soon as each stop is found, so a screen can show it straight away instead of waiting for all. */
+  onEach: (r: Resolved, index: number) => void = () => undefined,
 ): Promise<{ resolved: Resolved[]; demo: boolean }> {
   if (!providers) {
     return {
       demo: true,
-      resolved: stops.map((stop) => {
+      resolved: stops.map((stop, i) => {
         const place = demoPlace(stop);
-        return { stop, place, flags: place ? ['demo'] : ['not-found'] };
+        const r: Resolved = { stop, place, flags: place ? ['demo'] : ['not-found'] };
+        onEach(r, i);
+        return r;
       }),
     };
   }
@@ -70,6 +74,7 @@ export async function resolveAll(
         /* e.g. the address lookup is unreachable: keep the stop, flagged, never drop it */
       }
       out[i] = { stop, place: r?.place ?? null, flags: r ? r.flags : ['not-found'] };
+      onEach(out[i]!, i);
       onProgress(++done, stops.length);
     }
   };
